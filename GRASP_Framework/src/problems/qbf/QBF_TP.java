@@ -50,6 +50,31 @@ public class QBF_TP implements Evaluator<Integer> {
 	public Double[][] A;
 
 	/**
+	 * *funcao linear congruente l, tipicamente usada para a geracao de numeros pseudo-aleatorios
+	 */
+	public Integer l(Integer u, Integer pi1, Integer pi2, Integer n) {
+		return 1 + ((pi1 * u + pi2) % n);
+	}
+	
+	public Integer g(Integer u, Integer n) {
+		Integer g = l(u, 131, 1031, n);
+		if (g == u)
+			return (1 + (g%n));
+		return g;
+	}
+	
+	public Integer h(Integer u, Integer g, Integer n) {
+		Integer h = l(u, 193, 1093, n);
+		
+		if (h != u && h != g)
+			return h;
+		else if ((1+(h%n)) != u && (1+(h%n)) != g)
+			return (1+(h%n));
+				
+		return (1+((h+1)%n));
+	}
+	
+	/**
 	 * The constructor for QuadracticBinaryFunction class. The filename of the
 	 * input for setting matrix of coefficients A of the QBF_TP. The dimension of
 	 * the array of variables x is returned from the {@link #readInput} method.
