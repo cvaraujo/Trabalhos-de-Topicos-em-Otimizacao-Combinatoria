@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import metaheuristics.grasp.AbstractGRASP;
+import metaheuristics.grasp.AbstractGRASP_TP_RANDOMPLUS;
 import problems.qbf.QBF_Inverse;
 import problems.qbf.Tripla;
 import solutions.Solution;
@@ -19,10 +20,10 @@ import solutions.Solution;
  * 
  * @author ccavellucci, fusberti
  */
-public class GRASP_QBF_TP extends AbstractGRASP<Integer> {
+public class GRASP_QBF_TP_RANDOMPLUS extends AbstractGRASP_TP_RANDOMPLUS<Integer> {
 
 	/**
-	 * Constructor for the GRASP_QBF_TP class. An inverse QBF objective function is
+	 * Constructor for the GRASP_QBF_TP_RANDOMPLUS class. An inverse QBF objective function is
 	 * passed as argument for the superclass constructor.
 	 * 
 	 * @param alpha
@@ -36,7 +37,7 @@ public class GRASP_QBF_TP extends AbstractGRASP<Integer> {
 	 * @throws IOException
 	 *             necessary for I/O operations.
 	 */
-	public GRASP_QBF_TP(Double alpha, Integer iterations, String filename) throws IOException {
+	public GRASP_QBF_TP_RANDOMPLUS(Double alpha, Integer iterations, String filename) throws IOException {
 		super(new QBF_Inverse(filename), alpha, iterations);
 		inicializaHashMap();
 	}
@@ -262,7 +263,7 @@ public class GRASP_QBF_TP extends AbstractGRASP<Integer> {
 		//ArrayList<Tripla> triplas = new ArrayList<Tripla>();
 		//triplas.add(t);
 		
-		GRASP_QBF_TP grasp = new GRASP_QBF_TP(0.95, 1000, "instances/qbf100");
+		GRASP_QBF_TP_RANDOMPLUS grasp = new GRASP_QBF_TP_RANDOMPLUS(0.0, 1000, "instances/qbf100");
 
 		Solution<Integer> bestSol = grasp.solve();
 		System.out.println("maxVal = " + bestSol);
