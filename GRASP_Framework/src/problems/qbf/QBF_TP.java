@@ -48,50 +48,6 @@ public class QBF_TP implements Evaluator<Integer> {
 	 * The matrix A of coefficients for the QBF_TP f(x) = x'.A.x
 	 */
 	public Double[][] A;
-
-	/**
-	 * *funcao linear congruente l, tipicamente usada para a geracao de numeros pseudo-aleatorios
-	 */
-	public Integer l(Integer u, Integer pi1, Integer pi2, Integer n) {
-		return 1 + ((pi1 * u + pi2) % n);
-	}
-	
-	public Integer g(Integer u, Integer n) {
-		Integer g = l(u, 131, 1031, n);
-		if (g == u)
-			return (1 + (g%n));
-		return g;
-	}
-	
-	public Integer h(Integer u, Integer g, Integer n) {
-		Integer h = l(u, 193, 1093, n);
-		
-		if (h != u && h != g)
-			return h;
-		else if ((1+(h%n)) != u && (1+(h%n)) != g)
-			return (1+(h%n));
-				
-		return (1+((h+1)%n));
-	}
-	
-	public ArrayList<Integer[]> createProhibitedTriples(Integer n)
-	{
-		ArrayList<Integer[]> prohibitedTriples = new ArrayList<Integer[]>();
-		Integer[] triple;
-		
-		for (int u = 0; u < n; u++)
-		{
-			triple = new Integer[3];
-			triple[0] = u;
-			triple[1] = g(u, n);
-			triple[2] = h(u, triple[1], n);
-			java.util.Arrays.sort(triple);
-						
-			prohibitedTriples.add(triple);			
-		}
-				
-		return prohibitedTriples;
-	}
 	
 	/**
 	 * The constructor for QuadracticBinaryFunction class. The filename of the
@@ -104,6 +60,21 @@ public class QBF_TP implements Evaluator<Integer> {
 	 *             Necessary for I/O operations.
 	 */
 	
+	public ArrayList<Tripla> createProhibitedTriples(Integer n)
+	{
+		ArrayList<Tripla> prohibitedTriples = new ArrayList<Tripla>();
+		Tripla triple;
+		
+		for (int u = 0; u < n; u++)
+		{
+			triple = new Tripla(u, n);
+						
+			prohibitedTriples.add(triple);			
+		}
+				
+		return prohibitedTriples;
+	}
+	
 	
 	public void inicializaHashMap () {
 		for (int i = 0; i < maxVariavel; i++) {
@@ -111,8 +82,7 @@ public class QBF_TP implements Evaluator<Integer> {
 			for (Tripla t : triplas) {
 				if (t.estaNaTupla(i)) {
 					mapaTriplas.get(i).add(t);
-				}
-					
+				}					
 			}
 		}
 	}
@@ -358,12 +328,12 @@ public class QBF_TP implements Evaluator<Integer> {
 			}
 		}
 		
-		ArrayList<Integer[]> prohibitedTriples = createProhibitedTriples(_size);
-		Integer[] triple;
+		ArrayList<Tripla> prohibitedTriples = createProhibitedTriples(_size);
+		ArrayList <Integer> triple;
 		for (int i = 0; i < _size; i++)
 		{
-			triple = prohibitedTriples.get(i);
-			System.out.println(triple[0].toString()+',' + triple[1].toString() + "," + triple[2].toString());
+			triple = prohibitedTriples.get(i).getVariaveis();
+			System.out.println(triple.get(0).toString()+',' + triple.get(1).toString() + "," + triple.get(2).toString());
 		}
 		
 		return _size;
