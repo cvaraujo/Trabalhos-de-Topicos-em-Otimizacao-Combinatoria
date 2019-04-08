@@ -37,9 +37,11 @@ public class GRASP_QBF_TP extends AbstractGRASP<Integer> {
 	 * @throws IOException
 	 *             necessary for I/O operations.
 	 */
-	public GRASP_QBF_TP(Double alpha, Integer iterations, String filename) throws IOException {
+	public boolean first_improving;
+	public GRASP_QBF_TP(Double alpha, Integer iterations, String filename, boolean first_improving) throws IOException {
 		super(new QBF_Inverse(filename), alpha, iterations);
 		inicializaHashMap();
+		this.first_improving = first_improving;
 	}
 
 	/*
@@ -143,23 +145,6 @@ public class GRASP_QBF_TP extends AbstractGRASP<Integer> {
 	 */
 	@Override
 	public void updateCL() {
-
-		// do nothing since all elements off the solution are viable candidates.
-		//ArrayList<Integer> _CL = new ArrayList<Integer>();
-		/*CL.clear();
-		for (int i = 0; i < ObjFunction.getDomainSize(); i++) {
-			if (incumbentSol.contains(i))
-				continue;
-			boolean podeEntrar = true;
-			for (Tripla t : mapaTriplas.get(i)) {
-				if (t.estaSaturada()) {
-					podeEntrar = false;
-					break;
-				}
-			}
-			if (podeEntrar)
-				CL.add(i);
-		}*/
 		ArrayList <Integer> out = new ArrayList<Integer>();
 		for (Integer e : CL) {
 			for (Tripla t : mapaTriplas.get(e)) {
@@ -263,14 +248,12 @@ public class GRASP_QBF_TP extends AbstractGRASP<Integer> {
 		
 		String instancia = args[0];
 		double alpha = Double.parseDouble(args[1]);
-		
-		//sx.close();
+		int x = Integer.parseInt(args[2]);
+		boolean first = false;
+		if (x == 1)
+			first = true;
 		long startTime = System.currentTimeMillis();
-		//Tripla t = new Tripla (30,50);
-		//ArrayList<Tripla> triplas = new ArrayList<Tripla>();
-		//triplas.add(t);
-		
-		GRASP_QBF_TP grasp = new GRASP_QBF_TP(alpha, 1000, "instances/"+instancia);
+		GRASP_QBF_TP grasp = new GRASP_QBF_TP(alpha, 1000, "instances/"+instancia, first);
 		Solution<Integer> bestSol = grasp.solve();
 		System.out.println("maxVal = " + bestSol);
 		long endTime   = System.currentTimeMillis();
@@ -278,7 +261,6 @@ public class GRASP_QBF_TP extends AbstractGRASP<Integer> {
 		System.out.println("Time = "+(double)totalTime/(double)1000+" seg");
 
 	}
-
 
 
 	

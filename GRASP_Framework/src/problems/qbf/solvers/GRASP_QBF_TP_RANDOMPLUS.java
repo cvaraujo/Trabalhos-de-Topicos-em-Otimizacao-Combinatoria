@@ -37,9 +37,12 @@ public class GRASP_QBF_TP_RANDOMPLUS extends AbstractGRASP_TP_RANDOMPLUS<Integer
 	 * @throws IOException
 	 *             necessary for I/O operations.
 	 */
-	public GRASP_QBF_TP_RANDOMPLUS(Double alpha, Integer iterations, String filename) throws IOException {
+	
+	public boolean first_improving;
+	public GRASP_QBF_TP_RANDOMPLUS(Double alpha, Integer iterations, String filename, boolean first_improving) throws IOException {
 		super(new QBF_Inverse(filename), alpha, iterations);
 		inicializaHashMap();
+		this.first_improving = first_improving;
 	}
 
 	/*
@@ -211,6 +214,8 @@ public class GRASP_QBF_TP_RANDOMPLUS extends AbstractGRASP_TP_RANDOMPLUS<Integer
 					minDeltaCost = deltaCost;
 					bestCandIn = candIn;
 					bestCandOut = null;
+					if (first_improving)
+						break;
 				}
 			}
 			// Evaluate removals
@@ -220,21 +225,30 @@ public class GRASP_QBF_TP_RANDOMPLUS extends AbstractGRASP_TP_RANDOMPLUS<Integer
 					minDeltaCost = deltaCost;
 					bestCandIn = null;
 					bestCandOut = candOut;
+					if (first_improving)
+						break;
 				}
 			}
 			// Evaluate exchanges
 			for (Integer candIn : CL) {
+				boolean flag = false;
 				for (Integer candOut : incumbentSol) {
 					double deltaCost = ObjFunction.evaluateExchangeCost(candIn, candOut, incumbentSol);
 					if (deltaCost < minDeltaCost) {
 						minDeltaCost = deltaCost;
 						bestCandIn = candIn;
 						bestCandOut = candOut;
+						if (first_improving) {
+							flag = true;
+							break;
+						}
 					}
 				}
+				if (flag && first_improving)
+					break;
 			}
 			// Implement the best move, if it reduces the solution cost.
-			if (minDeltaCost+0.1 < -Double.MIN_VALUE) {
+			if (minDeltaCost < -Double.MIN_VALUE) {
 				if (bestCandOut != null) {
 					incumbentSol.remove(bestCandOut);
 					removerValorDaSolucao(bestCandOut);
@@ -258,12 +272,18 @@ public class GRASP_QBF_TP_RANDOMPLUS extends AbstractGRASP_TP_RANDOMPLUS<Integer
 	 */
 	public static void main(String[] args) throws IOException {
 
-		long startTime = System.currentTimeMillis();
-		//Tripla t = new Tripla (30,50);
-		//ArrayList<Tripla> triplas = new ArrayList<Tripla>();
-		//triplas.add(t);
 		
-		GRASP_QBF_TP_RANDOMPLUS grasp = new GRASP_QBF_TP_RANDOMPLUS(0.05, 1000, "instances/qbf020");
+		String instancia = args[0];
+		double alpha = Double.parseDouble(args[1]);
+		int x = Integer.parseInt(args[2]);
+		boolean first = false;
+		if (x == 1)
+			first = true;
+		
+		long startTime = System.currentTimeMillis();
+		
+		
+		GRASP_QBF_TP_RANDOMPLUS grasp = new GRASP_QBF_TP_RANDOMPLUS(alpha, 1000, "instances/"+instancia, first);
 
 		Solution<Integer> bestSol = grasp.solve();
 		System.out.println("maxVal = " + bestSol);

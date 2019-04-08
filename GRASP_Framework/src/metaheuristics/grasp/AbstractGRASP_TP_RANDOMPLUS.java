@@ -228,13 +228,14 @@ public abstract class AbstractGRASP_TP_RANDOMPLUS<E > {
 	public Solution<E> solve() {
 
 		bestSol = createEmptySol();
-		for (int i = 0; i < iterations; i++) {
+		long startTime = System.currentTimeMillis();
+		for (int i = 0; i < iterations && (System.currentTimeMillis()-startTime)/1000.0 < 1800.0; i++) {
 			constructiveHeuristic();
 			localSearch();
 			if (bestSol.cost > incumbentSol.cost) {
 				bestSol = new Solution<E>(incumbentSol);
 				if (verbose)
-					System.out.println("(Iter. " + i + ") BestSol = " + bestSol);
+					System.out.println("(Iter. " + i + ") BestSol = " + bestSol + "  time = " + (System.currentTimeMillis()-startTime)/1000.0);
 			}
 		}
 
