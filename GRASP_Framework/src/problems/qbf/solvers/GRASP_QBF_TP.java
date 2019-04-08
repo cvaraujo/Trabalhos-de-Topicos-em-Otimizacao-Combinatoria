@@ -2,9 +2,11 @@ package problems.qbf.solvers;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import metaheuristics.grasp.AbstractGRASP;
 import problems.qbf.QBF_Inverse;
+import problems.qbf.Tripla;
 import solutions.Solution;
 
 
@@ -17,10 +19,10 @@ import solutions.Solution;
  * 
  * @author ccavellucci, fusberti
  */
-public class GRASP_QBF extends AbstractGRASP<Integer> {
+public class GRASP_QBF_TP extends AbstractGRASP<Integer> {
 
 	/**
-	 * Constructor for the GRASP_QBF class. An inverse QBF objective function is
+	 * Constructor for the GRASP_QBF_TP class. An inverse QBF objective function is
 	 * passed as argument for the superclass constructor.
 	 * 
 	 * @param alpha
@@ -34,8 +36,10 @@ public class GRASP_QBF extends AbstractGRASP<Integer> {
 	 * @throws IOException
 	 *             necessary for I/O operations.
 	 */
-	public GRASP_QBF(Double alpha, Integer iterations, String filename) throws IOException {
+	public GRASP_QBF_TP(Double alpha, Integer iterations, String filename, ArrayList<Tripla> triplas) throws IOException {
 		super(new QBF_Inverse(filename), alpha, iterations);
+		this.triplas = triplas;
+		inicializaHashMap();
 	}
 
 	/*
@@ -43,9 +47,44 @@ public class GRASP_QBF extends AbstractGRASP<Integer> {
 	 * 
 	 * @see grasp.abstracts.AbstractGRASP#makeCL()
 	 */
+	
+	public ArrayList <Tripla> triplas;
+	public HashMap <Integer, ArrayList<Tripla> > mapaTriplas;
+	
+	
+	public void inicializaHashMap () {
+		mapaTriplas = new HashMap<Integer, ArrayList<Tripla>>();
+		for (int i = 0; i < ObjFunction.getDomainSize(); i++) {
+			mapaTriplas.put(i, new ArrayList<Tripla>());
+			for (Tripla t : triplas) {
+				if (t.estaNaTupla(i)) {
+					mapaTriplas.get(i).add(t);
+				}
+					
+			}
+		}
+	}
+	
+	
+	@Override
+	public void adicionarValorNaSolucao(Integer x) {
+		for (Tripla t : mapaTriplas.get(x)) {
+			t.adicionarNaSolucao(x);
+		}
+		
+	}
+	
+	@Override
+	public void removerValorDaSolucao(Integer x) {
+		for (Tripla t : mapaTriplas.get(x)) {
+			t.removerDaSolucao(x);
+		}
+	}
+	
+	
 	@Override
 	public ArrayList<Integer> makeCL() {
-
+		
 		ArrayList<Integer> _CL = new ArrayList<Integer>();
 		for (int i = 0; i < ObjFunction.getDomainSize(); i++) {
 			Integer cand = new Integer(i);
@@ -63,7 +102,7 @@ public class GRASP_QBF extends AbstractGRASP<Integer> {
 	 */
 	@Override
 	public ArrayList<Integer> makeRCL() {
-
+		
 		ArrayList<Integer> _RCL = new ArrayList<Integer>();
 
 		return _RCL;
@@ -79,7 +118,21 @@ public class GRASP_QBF extends AbstractGRASP<Integer> {
 	public void updateCL() {
 
 		// do nothing since all elements off the solution are viable candidates.
-
+		//ArrayList<Integer> _CL = new ArrayList<Integer>();
+		CL.clear();
+		for (int i = 0; i < ObjFunction.getDomainSize(); i++) {
+			if (incumbentSol.contains(i))
+				continue;
+			boolean podeEntrar = true;
+			for (Tripla t : mapaTriplas.get(i)) {
+				if (t.estaSaturada()) {
+					podeEntrar = false;
+					break;
+				}
+			}
+			if (podeEntrar)
+				CL.add(i);
+		}
 	}
 
 	/**
@@ -145,15 +198,17 @@ public class GRASP_QBF extends AbstractGRASP<Integer> {
 			if (minDeltaCost < -Double.MIN_VALUE) {
 				if (bestCandOut != null) {
 					incumbentSol.remove(bestCandOut);
+					removerValorDaSolucao(bestCandOut);
 					CL.add(bestCandOut);
 				}
 				if (bestCandIn != null) {
 					incumbentSol.add(bestCandIn);
+					adicionarValorNaSolucao(bestCandIn);
 					CL.remove(bestCandIn);
 				}
 				ObjFunction.evaluate(incumbentSol);
 			}
-		} while (minDeltaCost < -Double.MIN_VALUE);
+		} while (minDeltaCost < Double.MIN_VALUE);
 
 		return null;
 	}
@@ -165,7 +220,12 @@ public class GRASP_QBF extends AbstractGRASP<Integer> {
 	public static void main(String[] args) throws IOException {
 
 		long startTime = System.currentTimeMillis();
-		GRASP_QBF grasp = new GRASP_QBF(0.05, 1000, "instances/qbf020");
+		Tripla t = new Tripla (1,2,3);
+		ArrayList<Tripla> triplas = new ArrayList<Tripla>();
+		triplas.add(t);
+		
+		GRASP_QBF_TP grasp = new GRASP_QBF_TP(0.05, 1000, "instances/qbf040", triplas);
+		
 		Solution<Integer> bestSol = grasp.solve();
 		System.out.println("maxVal = " + bestSol);
 		long endTime   = System.currentTimeMillis();
@@ -174,16 +234,13 @@ public class GRASP_QBF extends AbstractGRASP<Integer> {
 
 	}
 
-	@Override
-	public void adicionarValorNaSolucao(Integer x) {
-		// TODO Auto-generated method stub
-		
-	}
 
-	@Override
-	public void removerValorDaSolucao(Integer x) {
-		// TODO Auto-generated method stub
-		
-	}
+	
+
+
+
+
+
+
 
 }

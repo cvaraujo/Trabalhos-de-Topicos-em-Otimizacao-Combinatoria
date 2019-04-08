@@ -11,11 +11,16 @@ import java.util.Arrays;
 public class Tripla {
 	
 	private ArrayList <Integer> variaveis;
-	
-	public Tripla (int a, int b, int c) {
+	private ArrayList <Integer> estaNaSolucao;
+	public Integer contador;
+	public Tripla (Integer a, Integer b, Integer c) {
+		variaveis = new ArrayList<Integer>();
+		estaNaSolucao = new ArrayList<Integer> ();
 		variaveis.add(a);
 		variaveis.add(b);
 		variaveis.add(c);
+		contador = 0;
+		
 	}
 
 	public ArrayList<Integer> getVariaveis() {
@@ -33,14 +38,19 @@ public class Tripla {
 	}
 	
 	
-	public boolean estaSaturada (int varSolucao[]) {
-		int cont = 0;
-		for (int x: varSolucao) {
-			if (estaNaTupla(x))
-				cont++;
-		}
-		
-		if (cont == 2) return true;
+	public void adicionarNaSolucao (int x) {
+		estaNaSolucao.add(x);
+		contador++;
+	}
+	
+	public void removerDaSolucao (int x) {
+		estaNaSolucao.remove (new Integer(x));
+		contador--;
+	}
+	
+	
+	public boolean estaSaturada () {
+		if (contador == 2) return true;
 		return false;
 		
 	}
