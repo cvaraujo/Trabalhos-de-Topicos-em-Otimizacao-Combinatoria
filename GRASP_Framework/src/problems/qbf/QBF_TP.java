@@ -74,6 +74,25 @@ public class QBF_TP implements Evaluator<Integer> {
 		return (1+((h+1)%n));
 	}
 	
+	public ArrayList<Integer[]> createProhibitedTriples(Integer n)
+	{
+		ArrayList<Integer[]> prohibitedTriples = new ArrayList<Integer[]>();
+		Integer[] triple;
+		
+		for (int u = 0; u < n; u++)
+		{
+			triple = new Integer[3];
+			triple[0] = u;
+			triple[1] = g(u, n);
+			triple[2] = h(u, triple[1], n);
+			java.util.Arrays.sort(triple);
+						
+			prohibitedTriples.add(triple);			
+		}
+				
+		return prohibitedTriples;
+	}
+	
 	/**
 	 * The constructor for QuadracticBinaryFunction class. The filename of the
 	 * input for setting matrix of coefficients A of the QBF_TP. The dimension of
@@ -338,7 +357,15 @@ public class QBF_TP implements Evaluator<Integer> {
 					A[j][i] = 0.0;
 			}
 		}
-
+		
+		ArrayList<Integer[]> prohibitedTriples = createProhibitedTriples(_size);
+		Integer[] triple;
+		for (int i = 0; i < _size; i++)
+		{
+			triple = prohibitedTriples.get(i);
+			System.out.println(triple[0].toString()+',' + triple[1].toString() + "," + triple[2].toString());
+		}
+		
 		return _size;
 
 	}
