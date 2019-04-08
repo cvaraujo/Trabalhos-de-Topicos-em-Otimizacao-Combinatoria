@@ -59,23 +59,7 @@ public class QBF_TP implements Evaluator<Integer> {
 	 * @throws IOException
 	 *             Necessary for I/O operations.
 	 */
-	
-	public ArrayList<Tripla> createProhibitedTriples(Integer n)
-	{
-		ArrayList<Tripla> prohibitedTriples = new ArrayList<Tripla>();
-		Tripla triple;
 		
-		for (int u = 0; u < n; u++)
-		{
-			triple = new Tripla(u, n);
-						
-			prohibitedTriples.add(triple);			
-		}
-				
-		return prohibitedTriples;
-	}
-	
-	
 	public void inicializaHashMap () {
 		for (int i = 0; i < maxVariavel; i++) {
 			
@@ -327,15 +311,7 @@ public class QBF_TP implements Evaluator<Integer> {
 					A[j][i] = 0.0;
 			}
 		}
-		
-		ArrayList<Tripla> prohibitedTriples = createProhibitedTriples(_size);
-		ArrayList <Integer> triple;
-		for (int i = 0; i < _size; i++)
-		{
-			triple = prohibitedTriples.get(i).getVariaveis();
-			System.out.println(triple.get(0).toString()+',' + triple.get(1).toString() + "," + triple.get(2).toString());
-		}
-		
+				
 		return _size;
 
 	}

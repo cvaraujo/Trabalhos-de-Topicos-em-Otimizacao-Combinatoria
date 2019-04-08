@@ -56,45 +56,6 @@ public class QBF implements Evaluator<Integer> {
 		variables = allocateVariables();
 	}
 	
-	/**
-	 * *funcao linear congruente l, tipicamente usada para a geracao de numeros pseudo-aleatorios
-	 */
-	public Integer l(Integer u, Integer pi1, Integer pi2, Integer n) {
-		return 1 + ((pi1 * u + pi2) % n);
-	}
-	
-	public Integer g(Integer u, Integer n) {
-		Integer g = l(u, 131, 1031, n);
-		if (g == u)
-			return (1 + (g%n));
-		return g;
-	}
-	
-	public Integer h(Integer u, Integer g, Integer n) {
-		Integer h = l(u, 193, 1093, n);
-		
-		if (h != u && h != g)
-			return h;
-		else if ((1+(h%n)) != u && (1+(h%n)) != g)
-			return (1+(h%n));
-				
-		return (1+((h+1)%n));
-	}
-	
-	public ArrayList<Tripla> createProhibitedTriples(Integer n)
-	{
-		ArrayList<Tripla> prohibitedTriples = new ArrayList<Tripla>();
-		Tripla triple;
-		
-		for (int u = 0; u < n; u++)
-		{
-			triple = new Tripla(u, n);
-						
-			prohibitedTriples.add(triple);			
-		}
-				
-		return prohibitedTriples;
-	}
 
 	/**
 	 * Evaluates the value of a solution by transforming it into a vector. This
@@ -331,14 +292,6 @@ public class QBF implements Evaluator<Integer> {
 			}
 		}
 		
-		ArrayList<Tripla> prohibitedTriples = createProhibitedTriples(_size);
-		ArrayList <Integer> triple;
-		for (int i = 0; i < _size; i++)
-		{
-			triple = prohibitedTriples.get(i).getVariaveis();
-			System.out.println(triple.get(0).toString()+',' + triple.get(1).toString() + "," + triple.get(2).toString());
-		}
-
 		return _size;
 
 	}
