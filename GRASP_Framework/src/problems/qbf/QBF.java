@@ -5,6 +5,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.StreamTokenizer;
+import java.util.ArrayList;
 import java.util.Arrays;
 import problems.Evaluator;
 import solutions.Solution;
@@ -54,6 +55,7 @@ public class QBF implements Evaluator<Integer> {
 		size = readInput(filename);
 		variables = allocateVariables();
 	}
+	
 
 	/**
 	 * Evaluates the value of a solution by transforming it into a vector. This
@@ -289,7 +291,7 @@ public class QBF implements Evaluator<Integer> {
 					A[j][i] = 0.0;
 			}
 		}
-
+		
 		return _size;
 
 	}

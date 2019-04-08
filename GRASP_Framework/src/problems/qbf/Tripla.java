@@ -12,17 +12,44 @@ public class Tripla {
 	
 	private ArrayList <Integer> variaveis;
 	private ArrayList <Integer> estaNaSolucao;
-	public Integer contador;
-	public Tripla (Integer a, Integer b, Integer c) {
+	public Integer contador;	
+
+	public Tripla (int u, int n) {
 		variaveis = new ArrayList<Integer>();
-		estaNaSolucao = new ArrayList<Integer> ();
-		variaveis.add(a);
-		variaveis.add(b);
-		variaveis.add(c);
+		estaNaSolucao = new ArrayList<Integer>();
+		Integer g = g(u,n);
+		variaveis.add(u);
+		variaveis.add(g);
+		variaveis.add(h(u,g,n));
 		contador = 0;
+	}
+	
+	/**
+	 * *funcao linear congruente l, tipicamente usada para a geracao de numeros pseudo-aleatorios
+	 */
+	public Integer l(Integer u, Integer pi1, Integer pi2, Integer n) {
+		return 1 + ((pi1 * u + pi2) % n);
+	}
+	
+	public Integer g(Integer u, Integer n) {
+		Integer g = l(u, 131, 1031, n);
+		if (g == u)
+			return (1 + (g%n));
+		return g;
+	}
+	
+	public Integer h(Integer u, Integer g, Integer n) {
+		Integer h = l(u, 193, 1093, n);
 		
+		if (h != u && h != g)
+			return h;
+		else if ((1+(h%n)) != u && (1+(h%n)) != g)
+			return (1+(h%n));
+				
+		return (1+((h+1)%n));
 	}
 
+	
 	public ArrayList<Integer> getVariaveis() {
 		return variaveis;
 	}

@@ -36,9 +36,8 @@ public class GRASP_QBF_TP extends AbstractGRASP<Integer> {
 	 * @throws IOException
 	 *             necessary for I/O operations.
 	 */
-	public GRASP_QBF_TP(Double alpha, Integer iterations, String filename, ArrayList<Tripla> triplas) throws IOException {
+	public GRASP_QBF_TP(Double alpha, Integer iterations, String filename) throws IOException {
 		super(new QBF_Inverse(filename), alpha, iterations);
-		this.triplas = triplas;
 		inicializaHashMap();
 	}
 
@@ -51,9 +50,25 @@ public class GRASP_QBF_TP extends AbstractGRASP<Integer> {
 	public ArrayList <Tripla> triplas;
 	public HashMap <Integer, ArrayList<Tripla> > mapaTriplas;
 	
+	public ArrayList<Tripla> createProhibitedTriples(Integer n)
+	{
+		ArrayList<Tripla> prohibitedTriples = new ArrayList<Tripla>();
+		Tripla triple;
+		
+		for (int u = 0; u < n; u++)
+		{
+			triple = new Tripla(u, n);
+						
+			prohibitedTriples.add(triple);			
+		}
+				
+		return prohibitedTriples;
+	}
 	
 	public void inicializaHashMap () {
 		mapaTriplas = new HashMap<Integer, ArrayList<Tripla>>();
+		triplas = createProhibitedTriples(ObjFunction.getDomainSize());
+		
 		for (int i = 0; i < ObjFunction.getDomainSize(); i++) {
 			mapaTriplas.put(i, new ArrayList<Tripla>());
 			for (Tripla t : triplas) {
@@ -232,11 +247,11 @@ public class GRASP_QBF_TP extends AbstractGRASP<Integer> {
 	public static void main(String[] args) throws IOException {
 
 		long startTime = System.currentTimeMillis();
-		Tripla t = new Tripla (1,30,50);
-		ArrayList<Tripla> triplas = new ArrayList<Tripla>();
-		triplas.add(t);
+		//Tripla t = new Tripla (30,50);
+		//ArrayList<Tripla> triplas = new ArrayList<Tripla>();
+		//triplas.add(t);
 		
-		GRASP_QBF_TP grasp = new GRASP_QBF_TP(0.05, 1000, "instances/qbf040", triplas);
+		GRASP_QBF_TP grasp = new GRASP_QBF_TP(0.05, 1000, "instances/qbf040");
 		
 		Solution<Integer> bestSol = grasp.solve();
 		System.out.println("maxVal = " + bestSol);
