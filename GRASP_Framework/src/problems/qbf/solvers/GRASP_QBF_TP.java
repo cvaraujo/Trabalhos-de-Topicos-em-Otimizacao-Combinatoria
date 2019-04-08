@@ -119,7 +119,7 @@ public class GRASP_QBF_TP extends AbstractGRASP<Integer> {
 
 		// do nothing since all elements off the solution are viable candidates.
 		//ArrayList<Integer> _CL = new ArrayList<Integer>();
-		CL.clear();
+		/*CL.clear();
 		for (int i = 0; i < ObjFunction.getDomainSize(); i++) {
 			if (incumbentSol.contains(i))
 				continue;
@@ -132,6 +132,18 @@ public class GRASP_QBF_TP extends AbstractGRASP<Integer> {
 			}
 			if (podeEntrar)
 				CL.add(i);
+		}*/
+		ArrayList <Integer> out = new ArrayList<Integer>();
+		for (Integer e : CL) {
+			for (Tripla t : mapaTriplas.get(e)) {
+				if (t.estaSaturada()) {
+					out.add(e);
+					break;
+				}
+			}
+		}
+		for (Integer e : out) {
+			CL.remove(e);
 		}
 	}
 
@@ -164,7 +176,7 @@ public class GRASP_QBF_TP extends AbstractGRASP<Integer> {
 		do {
 			minDeltaCost = Double.POSITIVE_INFINITY;
 			updateCL();
-				
+			
 			// Evaluate insertions
 			for (Integer candIn : CL) {
 				double deltaCost = ObjFunction.evaluateInsertionCost(candIn, incumbentSol);
@@ -195,7 +207,7 @@ public class GRASP_QBF_TP extends AbstractGRASP<Integer> {
 				}
 			}
 			// Implement the best move, if it reduces the solution cost.
-			if (minDeltaCost < -Double.MIN_VALUE) {
+			if (minDeltaCost+0.1 < -Double.MIN_VALUE) {
 				if (bestCandOut != null) {
 					incumbentSol.remove(bestCandOut);
 					removerValorDaSolucao(bestCandOut);
@@ -208,7 +220,7 @@ public class GRASP_QBF_TP extends AbstractGRASP<Integer> {
 				}
 				ObjFunction.evaluate(incumbentSol);
 			}
-		} while (minDeltaCost < Double.MIN_VALUE);
+		} while (minDeltaCost < -Double.MIN_VALUE);
 
 		return null;
 	}
@@ -220,7 +232,7 @@ public class GRASP_QBF_TP extends AbstractGRASP<Integer> {
 	public static void main(String[] args) throws IOException {
 
 		long startTime = System.currentTimeMillis();
-		Tripla t = new Tripla (1,2,3);
+		Tripla t = new Tripla (1,30,50);
 		ArrayList<Tripla> triplas = new ArrayList<Tripla>();
 		triplas.add(t);
 		
