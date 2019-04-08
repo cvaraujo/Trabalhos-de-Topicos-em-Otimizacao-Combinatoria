@@ -271,7 +271,6 @@ public class GRASP_QBF_TP extends AbstractGRASP<Integer> {
 		//triplas.add(t);
 		
 		GRASP_QBF_TP grasp = new GRASP_QBF_TP(alpha, 1000, "instances/"+instancia);
-
 		Solution<Integer> bestSol = grasp.solve();
 		System.out.println("maxVal = " + bestSol);
 		long endTime   = System.currentTimeMillis();
