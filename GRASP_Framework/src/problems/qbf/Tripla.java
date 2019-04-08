@@ -28,7 +28,7 @@ public class Tripla {
 	 * *funcao linear congruente l, tipicamente usada para a geracao de numeros pseudo-aleatorios
 	 */
 	public Integer l(Integer u, Integer pi1, Integer pi2, Integer n) {
-		return (1 + ((pi1 * u + pi2) % n));
+		return (((pi1 * u + pi2) % n));
 	}
 	
 	public Integer g(Integer u, Integer n) {
