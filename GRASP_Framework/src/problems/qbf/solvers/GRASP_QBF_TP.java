@@ -57,8 +57,8 @@ public class GRASP_QBF_TP extends AbstractGRASP<Integer> {
 		
 		for (int u = 0; u < n; u++)
 		{
-			triple = new Tripla(u, n);
-						
+			triple = new Tripla(u, n-1);
+			//System.out.println(triple.getVariaveis().toString());
 			prohibitedTriples.add(triple);			
 		}
 				
@@ -251,7 +251,7 @@ public class GRASP_QBF_TP extends AbstractGRASP<Integer> {
 		//ArrayList<Tripla> triplas = new ArrayList<Tripla>();
 		//triplas.add(t);
 		
-		GRASP_QBF_TP grasp = new GRASP_QBF_TP(0.05, 1000, "instances/qbf040");
+		GRASP_QBF_TP grasp = new GRASP_QBF_TP(0.05, 1000, "instances/qbf020");
 		
 		Solution<Integer> bestSol = grasp.solve();
 		System.out.println("maxVal = " + bestSol);
