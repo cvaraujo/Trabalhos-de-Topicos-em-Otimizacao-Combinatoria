@@ -258,19 +258,15 @@ public class GRASP_QBF_TP extends AbstractGRASP<Integer> {
 	 */
 	public static void main(String[] args) throws IOException {
 		
-		
-		
-		
-		String instancia = args[0];
-		double alpha = Double.parseDouble(args[1]);
-		
-		//sx.close();
+		Scanner sx = new Scanner(System.in);
+		String instancia = sx.nextLine();
+		sx.close();
 		long startTime = System.currentTimeMillis();
 		//Tripla t = new Tripla (30,50);
 		//ArrayList<Tripla> triplas = new ArrayList<Tripla>();
 		//triplas.add(t);
 		
-		GRASP_QBF_TP grasp = new GRASP_QBF_TP(alpha, 1000, "instances/"+instancia);
+		GRASP_QBF_TP grasp = new GRASP_QBF_TP(0.95, 1000, "instances/"+instancia);
 
 		Solution<Integer> bestSol = grasp.solve();
 		System.out.println("maxVal = " + bestSol);

@@ -230,7 +230,6 @@ public abstract class AbstractGRASP_TP_RANDOMPLUS<E > {
 		bestSol = createEmptySol();
 		for (int i = 0; i < iterations; i++) {
 			constructiveHeuristic();
-			System.out.println("i = " + i + "iterations = " + iterations);
 			localSearch();
 			if (bestSol.cost > incumbentSol.cost) {
 				bestSol = new Solution<E>(incumbentSol);
