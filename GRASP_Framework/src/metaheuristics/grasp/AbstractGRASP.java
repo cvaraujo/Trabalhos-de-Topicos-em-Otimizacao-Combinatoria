@@ -145,6 +145,8 @@ public abstract class AbstractGRASP<E > {
 		this.iterations = iterations;
 	}
 	
+	public abstract void ZeraSolucao ();
+	
 	/**
 	 * The GRASP constructive heuristic, which is responsible for building a
 	 * feasible solution by selecting in a greedy-random fashion, candidate
@@ -153,15 +155,14 @@ public abstract class AbstractGRASP<E > {
 	 * @return A feasible solution to the problem being minimized.
 	 */
 	public Solution<E> constructiveHeuristic() {
-
 		CL = makeCL();
 		RCL = makeRCL();
 		incumbentSol = createEmptySol();
 		incumbentCost = Double.POSITIVE_INFINITY;
-
+		ZeraSolucao();
 		/* Main loop, which repeats until the stopping criteria is reached. */
 		while (!constructiveStopCriteria()) {
-
+			
 			double maxCost = Double.NEGATIVE_INFINITY, minCost = Double.POSITIVE_INFINITY;
 			incumbentCost = ObjFunction.evaluate(incumbentSol);
 			updateCL();

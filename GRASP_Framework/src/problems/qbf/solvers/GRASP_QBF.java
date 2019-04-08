@@ -186,4 +186,10 @@ public class GRASP_QBF extends AbstractGRASP<Integer> {
 		
 	}
 
+	@Override
+	public void ZeraSolucao() {
+		// TODO Auto-generated method stub
+		
+	}
+
 }
