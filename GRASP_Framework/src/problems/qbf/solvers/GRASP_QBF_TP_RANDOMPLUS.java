@@ -263,7 +263,7 @@ public class GRASP_QBF_TP_RANDOMPLUS extends AbstractGRASP_TP_RANDOMPLUS<Integer
 		//ArrayList<Tripla> triplas = new ArrayList<Tripla>();
 		//triplas.add(t);
 		
-		GRASP_QBF_TP_RANDOMPLUS grasp = new GRASP_QBF_TP_RANDOMPLUS(0.0, 1000, "instances/qbf100");
+		GRASP_QBF_TP_RANDOMPLUS grasp = new GRASP_QBF_TP_RANDOMPLUS(0.0, 1000, "instances/qbf020");
 
 		Solution<Integer> bestSol = grasp.solve();
 		System.out.println("maxVal = " + bestSol);

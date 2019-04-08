@@ -222,7 +222,8 @@ public abstract class AbstractGRASP<E > {
 		bestSol = createEmptySol();
 		for (int i = 0; i < iterations; i++) {
 			constructiveHeuristic();
-			System.out.println("i = " + i + "iterations = " + iterations);
+			if (i%10 == 0)
+				System.out.println("i = " + i + " iterations = " + iterations);
 			localSearch();
 			if (bestSol.cost > incumbentSol.cost) {
 				bestSol = new Solution<E>(incumbentSol);
