@@ -4,9 +4,11 @@
 package metaheuristics.grasp;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Random;
 
 import problems.Evaluator;
+import problems.qbf.Tripla;
 import solutions.Solution;
 
 /**
@@ -19,6 +21,9 @@ import solutions.Solution;
  */
 public abstract class AbstractGRASP<E > {
 
+	
+	
+	
 	/**
 	 * flag that indicates whether the code should print more information on
 	 * screen
@@ -74,13 +79,19 @@ public abstract class AbstractGRASP<E > {
 	 * the Restricted Candidate List of elements to enter the solution.
 	 */
 	protected ArrayList<E> RCL;
-
+	
 	/**
 	 * Creates the Candidate List, which is an ArrayList of candidate elements
 	 * that can enter a solution.
 	 * 
 	 * @return The Candidate List.
 	 */
+	
+	public abstract void adicionarValorNaSolucao (E x);
+	
+	public abstract void removerValorDaSolucao (E x);
+	
+	
 	public abstract ArrayList<E> makeCL();
 
 	/**
@@ -177,13 +188,17 @@ public abstract class AbstractGRASP<E > {
 					RCL.add(c);
 				}
 			}
-
+			
+			
 			/* Choose a candidate randomly from the RCL */
+			//System.out.println("Tam = " + RCL.size());
+			//System.out.println("xxxx");
 			int rndIndex = rng.nextInt(RCL.size());
 			E inCand = RCL.get(rndIndex);
 			CL.remove(inCand);
 			incumbentSol.add(inCand);
 			ObjFunction.evaluate(incumbentSol);
+			adicionarValorNaSolucao(inCand);
 			RCL.clear();
 
 		}
@@ -203,6 +218,7 @@ public abstract class AbstractGRASP<E > {
 		bestSol = createEmptySol();
 		for (int i = 0; i < iterations; i++) {
 			constructiveHeuristic();
+			System.out.println("i = " + i + "iterations = " + iterations);
 			localSearch();
 			if (bestSol.cost > incumbentSol.cost) {
 				bestSol = new Solution<E>(incumbentSol);
@@ -224,5 +240,7 @@ public abstract class AbstractGRASP<E > {
 	public Boolean constructiveStopCriteria() {
 		return (incumbentCost > incumbentSol.cost) ? false : true;
 	}
+
+
 
 }

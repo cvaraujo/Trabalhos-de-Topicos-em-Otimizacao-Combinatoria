@@ -46,6 +46,9 @@ public class Tripla {
 		return (1+((h+1)%n));
 	}
 
+	private ArrayList <Integer> estaNaSolucao;
+	public Integer contador;	
+
 	public ArrayList<Integer> getVariaveis() {
 		return variaveis;
 	}
@@ -61,14 +64,19 @@ public class Tripla {
 	}
 	
 	
-	public boolean estaSaturada (int varSolucao[]) {
-		int cont = 0;
-		for (int x: varSolucao) {
-			if (estaNaTupla(x))
-				cont++;
-		}
-		
-		if (cont == 2) return true;
+	public void adicionarNaSolucao (int x) {
+		estaNaSolucao.add(x);
+		contador++;
+	}
+	
+	public void removerDaSolucao (int x) {
+		estaNaSolucao.remove (new Integer(x));
+		contador--;
+	}
+	
+	
+	public boolean estaSaturada () {
+		if (contador == 2) return true;
 		return false;
 		
 	}
