@@ -65,6 +65,15 @@ public class GRASP_QBF_TP extends AbstractGRASP<Integer> {
 		return prohibitedTriples;
 	}
 	
+	@Override
+	public void ZeraSolucao() {
+		for (Tripla t : triplas) {
+			t.contador = 0;
+		}
+		
+	}
+
+	
 	public void inicializaHashMap () {
 		mapaTriplas = new HashMap<Integer, ArrayList<Tripla>>();
 		triplas = createProhibitedTriples(ObjFunction.getDomainSize());
@@ -109,6 +118,8 @@ public class GRASP_QBF_TP extends AbstractGRASP<Integer> {
 		return _CL;
 
 	}
+	
+	
 
 	/*
 	 * (non-Javadoc)
@@ -251,7 +262,7 @@ public class GRASP_QBF_TP extends AbstractGRASP<Integer> {
 		//ArrayList<Tripla> triplas = new ArrayList<Tripla>();
 		//triplas.add(t);
 		
-		GRASP_QBF_TP grasp = new GRASP_QBF_TP(0.05, 1000, "instances/qbf040");
+		GRASP_QBF_TP grasp = new GRASP_QBF_TP(0.05, 1000, "instances/qbf200");
 		
 		Solution<Integer> bestSol = grasp.solve();
 		System.out.println("maxVal = " + bestSol);
@@ -260,6 +271,7 @@ public class GRASP_QBF_TP extends AbstractGRASP<Integer> {
 		System.out.println("Time = "+(double)totalTime/(double)1000+" seg");
 
 	}
+
 
 
 	
