@@ -33,7 +33,7 @@ public abstract class AbstractGRASP<E > {
 	/**
 	 * a random number generator
 	 */
-	static Random rng = new Random(0);
+	protected static Random rng = new Random(0);
 
 	/**
 	 * the objective function being optimized
