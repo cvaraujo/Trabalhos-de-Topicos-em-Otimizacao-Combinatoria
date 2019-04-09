@@ -39,11 +39,13 @@ public class GRASP_QBF_TP_INTELLIGENT extends AbstractGRASP<Integer> {
 	 *             necessary for I/O operations.
 	 */
 	public boolean first_improving;
-	public GRASP_QBF_TP_INTELLIGENT(Double alpha, Integer iterations, String filename, boolean first_improving, Integer r) throws IOException {
+	public GRASP_QBF_TP_INTELLIGENT(Double alpha, Integer iterations, String filename, boolean first_improving) throws IOException {
 		super(new QBF_Inverse(filename), alpha, iterations);
 		inicializaHashMap();
 		this.first_improving = first_improving;
-		eliteSolutionsPool = new EliteSolutions(r,  ObjFunction.getDomainSize());
+		this.r = ObjFunction.getDomainSize()/10;
+		eliteSolutionsPool = new EliteSolutions(this.r,  ObjFunction.getDomainSize());
+		
 		K = new ArrayList<Double>();
 	}
 
@@ -62,6 +64,8 @@ public class GRASP_QBF_TP_INTELLIGENT extends AbstractGRASP<Integer> {
 	 */
 	protected ArrayList<Double> K;
 	
+	public Integer r;
+	
 	
 	/**
 	 * The GRASP constructive heuristic, which is responsible for building a
@@ -76,7 +80,7 @@ public class GRASP_QBF_TP_INTELLIGENT extends AbstractGRASP<Integer> {
 		incumbentSol = createEmptySol();
 		incumbentCost = Double.POSITIVE_INFINITY;
 		ZeraSolucao();
-		double lambda = 20.0, sumK = 0;
+		double lambda = 5.0, sumK = 0;
 		int p = CL.size()/10;
 		int iteracoes = 1;
 		Double best_p, p_k;
@@ -89,7 +93,7 @@ public class GRASP_QBF_TP_INTELLIGENT extends AbstractGRASP<Integer> {
 //			if (iteracoes <= p)
 //				alpha = 0.85;
 //			else {
-				alpha = 0.15;
+				
 //			}
 			iteracoes++;
 			/*
@@ -125,33 +129,72 @@ public class GRASP_QBF_TP_INTELLIGENT extends AbstractGRASP<Integer> {
 			if (RCL.size() == 0)
 				break;
 			
-			// Intelligent search
-			best_p = (Double) K.get(0)/sumK;
-			int p_idx = 0;
-			for (int i = 1; i < K.size(); i++) {
+			double rndP = rng.nextDouble();
+			
+			// Intelligent search robability
+			int p_idx = -1;
+			best_p = 0.0;
+			for (int i = 0; i < K.size(); i++) {
 				p_k = (Double) K.get(i)/sumK;
-				if (p_k > best_p)
+				if (p_k >= rndP)
 				{
-					best_p = p_k;
-					p_idx = i;
+					if (p_k > best_p)
+					{
+						best_p = p_k;
+						p_idx = i;
+					}
 				}
 			}
 			
-//			int rndIndex = rng.nextInt(RCL.size());
-//			Integer inCand = RCL.get(rndIndex);
-			Integer inCand = RCL.get(p_idx);			
+			if (p_idx == -1) // no element was added, add at random
+			{
+				int rndIndex = rng.nextInt(RCL.size());
+				Integer inCand = RCL.get(rndIndex);		
+				
+				CL.remove(inCand);
+				incumbentSol.add(inCand);
+				ObjFunction.evaluate(incumbentSol);
+				adicionarValorNaSolucao(inCand);
+			} else {
+				Integer inCand = RCL.get(p_idx);		
+				
+				CL.remove(inCand);
+				incumbentSol.add(inCand);
+				ObjFunction.evaluate(incumbentSol);
+				adicionarValorNaSolucao(inCand);
+			}
 			
-			CL.remove(inCand);
-			incumbentSol.add(inCand);
-			ObjFunction.evaluate(incumbentSol);
-			adicionarValorNaSolucao(inCand);
 			RCL.clear();
 			K.clear();
 		}
 		
-		eliteSolutionsPool.tryInsertSolution(incumbentSol);
-
 		return incumbentSol;
+	}
+	
+	/**
+	 * The GRASP mainframe. It consists of a loop, in which each iteration goes
+	 * through the constructive heuristic and local search. The best solution is
+	 * returned as result.
+	 * 
+	 * @return The best feasible solution obtained throughout all iterations.
+	 */
+	public Solution<Integer> solve() {
+
+		bestSol = createEmptySol();
+		long startTime = System.currentTimeMillis();
+		for (int i = 0; i < iterations && (System.currentTimeMillis()-startTime)/1000.0 < 1800.0; i++) {
+			constructiveHeuristic();
+			localSearch();
+			if (bestSol.cost > incumbentSol.cost) {
+				bestSol = new Solution<Integer>(incumbentSol);
+				
+				if (verbose)
+					System.out.println("(Iter. " + i + ") BestSol = " + bestSol + "  time = " + (System.currentTimeMillis()-startTime)/1000.0);
+			}
+			eliteSolutionsPool.tryInsertSolution(incumbentSol);
+		}
+
+		return bestSol;
 	}
 	
 	public ArrayList<Tripla> createProhibitedTriples(Integer n)
@@ -234,7 +277,6 @@ public class GRASP_QBF_TP_INTELLIGENT extends AbstractGRASP<Integer> {
 		ArrayList<Integer> _RCL = new ArrayList<Integer>();
 
 		return _RCL;
-
 	}
 
 	/*
@@ -295,6 +337,8 @@ public class GRASP_QBF_TP_INTELLIGENT extends AbstractGRASP<Integer> {
 					minDeltaCost = deltaCost;
 					bestCandIn = candIn;
 					bestCandOut = null;
+					if (first_improving)
+						break;
 				}
 			}
 			// Evaluate removals
@@ -304,18 +348,27 @@ public class GRASP_QBF_TP_INTELLIGENT extends AbstractGRASP<Integer> {
 					minDeltaCost = deltaCost;
 					bestCandIn = null;
 					bestCandOut = candOut;
+					if (first_improving)
+						break;
 				}
 			}
 			// Evaluate exchanges
 			for (Integer candIn : CL) {
+				boolean flag = false;
 				for (Integer candOut : incumbentSol) {
 					double deltaCost = ObjFunction.evaluateExchangeCost(candIn, candOut, incumbentSol);
 					if (deltaCost < minDeltaCost) {
 						minDeltaCost = deltaCost;
 						bestCandIn = candIn;
 						bestCandOut = candOut;
+						if (first_improving) {
+							flag = true;
+							break;
+						}
 					}
 				}
+				if (flag && first_improving)
+					break;
 			}
 			// Implement the best move, if it reduces the solution cost.
 			if (minDeltaCost+0.1 < -Double.MIN_VALUE) {
@@ -348,14 +401,13 @@ public class GRASP_QBF_TP_INTELLIGENT extends AbstractGRASP<Integer> {
 		String instancia = args[0];
 		double alpha = Double.parseDouble(args[1]);
 		int x = Integer.parseInt(args[2]);
-		int r = 20;
 		boolean first = false;
 		if (x == 1)
 			first = true;
 		long startTime = System.currentTimeMillis();
-		GRASP_QBF_TP_INTELLIGENT grasp = new GRASP_QBF_TP_INTELLIGENT(alpha, 1000, "instances/"+instancia, first, r);
+		GRASP_QBF_TP_INTELLIGENT grasp = new GRASP_QBF_TP_INTELLIGENT(alpha, 1000, "instances/"+instancia, first);
 		Solution<Integer> bestSol = grasp.solve();
-		System.out.println("maxVal = " + bestSol);
+		System.out.println("maxVal = " + bestSol + "; alpha = " + alpha);
 		long endTime   = System.currentTimeMillis();
 		long totalTime = endTime - startTime;
 		System.out.println("Time = "+(double)totalTime/(double)1000+" seg");

@@ -69,7 +69,8 @@ public class EliteSolutions {
 		if (poolEliteSols.size() == r) {
 			// remove worst and update idxs
 			removeCounts(worstIdx);
-			poolEliteSols.add(worstIdx, sol);
+			poolEliteSols.set(worstIdx, sol);
+			//poolEliteSols.add(worstIdx, sol);
 			addCounts(worstIdx);
 			if (sol.cost <= bestCost)
 			{
@@ -90,7 +91,7 @@ public class EliteSolutions {
 			if (poolEliteSols.size() == r)
 				setWorstIdx();
 		}
-		computeI();
+		//computeI();
 	}
 	
 	public void removeCounts(Integer idx) {
@@ -137,7 +138,7 @@ public class EliteSolutions {
 	}
 	
 	public void tryInsertSolution(Solution<Integer> sol) {
-		if (sol.cost <= bestCost) {
+		if (sol.cost < bestCost) {
 			insertSolution(sol);
 		} else if (sol.cost < worstCost && isDifferent(sol)) {
 			insertSolution(sol);

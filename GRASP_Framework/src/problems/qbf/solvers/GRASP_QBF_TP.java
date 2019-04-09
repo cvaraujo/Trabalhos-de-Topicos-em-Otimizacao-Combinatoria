@@ -196,6 +196,8 @@ public class GRASP_QBF_TP extends AbstractGRASP<Integer> {
 					minDeltaCost = deltaCost;
 					bestCandIn = candIn;
 					bestCandOut = null;
+					if (first_improving)
+						break;
 				}
 			}
 			// Evaluate removals
@@ -205,18 +207,28 @@ public class GRASP_QBF_TP extends AbstractGRASP<Integer> {
 					minDeltaCost = deltaCost;
 					bestCandIn = null;
 					bestCandOut = candOut;
+					if (first_improving)
+						break;
 				}
 			}
 			// Evaluate exchanges
 			for (Integer candIn : CL) {
+				boolean flag = false;
 				for (Integer candOut : incumbentSol) {
 					double deltaCost = ObjFunction.evaluateExchangeCost(candIn, candOut, incumbentSol);
 					if (deltaCost < minDeltaCost) {
 						minDeltaCost = deltaCost;
 						bestCandIn = candIn;
 						bestCandOut = candOut;
+						if (first_improving)
+						{
+							flag = true;
+							break;
+						}
 					}
 				}
+				if (flag && first_improving)
+					break;
 			}
 			// Implement the best move, if it reduces the solution cost.
 			if (minDeltaCost+0.1 < -Double.MIN_VALUE) {
@@ -241,11 +253,7 @@ public class GRASP_QBF_TP extends AbstractGRASP<Integer> {
 	 * A main method used for testing the GRASP metaheuristic.
 	 * 
 	 */
-	public static void main(String[] args) throws IOException {
-		
-		
-		
-		
+	public static void main(String[] args) throws IOException {				
 		String instancia = args[0];
 		double alpha = Double.parseDouble(args[1]);
 		int x = Integer.parseInt(args[2]);

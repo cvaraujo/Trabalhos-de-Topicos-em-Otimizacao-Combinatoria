@@ -286,7 +286,7 @@ public class GRASP_QBF_TP_RANDOMPLUS extends AbstractGRASP_TP_RANDOMPLUS<Integer
 		GRASP_QBF_TP_RANDOMPLUS grasp = new GRASP_QBF_TP_RANDOMPLUS(alpha, 1000, "instances/"+instancia, first);
 
 		Solution<Integer> bestSol = grasp.solve();
-		System.out.println("maxVal = " + bestSol);
+		System.out.println("maxVal = " + bestSol + "; alpha = " + alpha);
 		long endTime   = System.currentTimeMillis();
 		long totalTime = endTime - startTime;
 		System.out.println("Time = "+(double)totalTime/(double)1000+" seg");
