@@ -89,6 +89,8 @@ public class GRASP_QBF_TP_INTELLIGENT extends AbstractGRASP<Integer> {
 		Integer p_k;
 		if (eliteSolutionsPool.size() == r)
 			lambda -= lambda*(p_i);
+		if (lambda < 1)
+			lambda = r/2;
 		
 		/* Main loop, which repeats until the stopping criteria is reached. */
 		while (!constructiveStopCriteria()) {
@@ -175,14 +177,20 @@ public class GRASP_QBF_TP_INTELLIGENT extends AbstractGRASP<Integer> {
 	public Solution<Integer> solve() {
 
 		bestSol = createEmptySol();
+		int bestSol_i = 0;
 		long startTime = System.currentTimeMillis();
 		for (int i = 0; i < iterations && (System.currentTimeMillis()-startTime)/1000.0 < 1800.0; i++) {
-			p_i = i/iterations;
+			
+			if (i-bestSol_i >= 5 && i/iterations < 0.5)
+				p_i = i/iterations; // % of iterations covered
+			else 
+				p_i = 0.5;
+				
 			constructiveHeuristic();
 			localSearch();
 			if (bestSol.cost > incumbentSol.cost) {
 				bestSol = new Solution<Integer>(incumbentSol);
-				
+				bestSol_i = i;
 				if (verbose)
 					System.out.println("(Iter. " + i + ") BestSol = " + bestSol + "  time = " + (System.currentTimeMillis()-startTime)/1000.0);
 			}
