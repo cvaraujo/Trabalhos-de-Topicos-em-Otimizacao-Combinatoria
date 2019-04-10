@@ -83,7 +83,8 @@ public class GRASP_QBF_TP_INTELLIGENT extends AbstractGRASP<Integer> {
 		double lambda = 5.0, sumK = 0;
 		int p = CL.size()/10;
 		int iteracoes = 1;
-		Double best_p, p_k;
+		Double best_p;
+		Integer p_k;
 		/* Main loop, which repeats until the stopping criteria is reached. */
 		while (!constructiveStopCriteria()) {
 			sumK = 0;
@@ -134,18 +135,26 @@ public class GRASP_QBF_TP_INTELLIGENT extends AbstractGRASP<Integer> {
 			// Intelligent search robability
 			int p_idx = -1;
 			best_p = 0.0;
+			ArrayList <Integer> p_ = new ArrayList<Integer>();
 			for (int i = 0; i < K.size(); i++) {
-				p_k = (Double) K.get(i)/sumK;
-				if (p_k >= rndP)
-				{
-					if (p_k > best_p)
-					{
-						best_p = p_k;
-						p_idx = i;
-					}
-				}
+				p_k =   (int) ((K.get(i)/sumK) * 100);
+				p_.add(p_k);
 			}
 			
+			int rndIndex = rng.nextInt(100) + 1;
+			int acumulado = 1;
+			for (int i = 0; acumulado <= 100 && i < p_.size(); i++) {
+				if (rndIndex >= acumulado && rndIndex <= acumulado + p_.get(i)) {
+					Integer inCand = RCL.get(i);
+					CL.remove(inCand);
+					incumbentSol.add(inCand);
+					ObjFunction.evaluate(incumbentSol);
+					adicionarValorNaSolucao(inCand);
+				}
+				acumulado += p_.get(i);
+			}
+			
+			/*
 			if (p_idx == -1) // no element was added, add at random
 			{
 				int rndIndex = rng.nextInt(RCL.size());
@@ -163,7 +172,7 @@ public class GRASP_QBF_TP_INTELLIGENT extends AbstractGRASP<Integer> {
 				ObjFunction.evaluate(incumbentSol);
 				adicionarValorNaSolucao(inCand);
 			}
-			
+			*/
 			RCL.clear();
 			K.clear();
 		}
