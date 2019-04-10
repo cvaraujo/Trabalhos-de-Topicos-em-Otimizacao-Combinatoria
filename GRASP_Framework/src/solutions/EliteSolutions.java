@@ -29,7 +29,7 @@ public class EliteSolutions {
 		sumCounts = 0;
 		this.r = r;
 		this.n = n;
-		this.d = 0.5;
+		this.d = 0.4;
 		
 		// initialize count to zero
 		countElem = new Integer[n];
@@ -114,6 +114,8 @@ public class EliteSolutions {
 //		for (int i = 0; i < intensity.length; i++)
 //			intensity[i] = (double) (countElem[i] / sumCounts);
 //	}
+	
+	public int size() {return(poolEliteSols.size());}
 	
 	public Boolean isDifferent(Solution<Integer> sol) {
 		// compare to the others solution in the pool

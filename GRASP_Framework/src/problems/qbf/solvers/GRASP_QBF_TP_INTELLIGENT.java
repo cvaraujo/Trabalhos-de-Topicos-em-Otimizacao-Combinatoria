@@ -43,7 +43,7 @@ public class GRASP_QBF_TP_INTELLIGENT extends AbstractGRASP<Integer> {
 		super(new QBF_Inverse(filename), alpha, iterations);
 		inicializaHashMap();
 		this.first_improving = first_improving;
-		this.r = (int) Math.round(ObjFunction.getDomainSize()*0.20);
+		this.r = 20; //(int) Math.round(ObjFunction.getDomainSize()*0.20);
 		this.lambda = this.r;
 		eliteSolutionsPool = new EliteSolutions(this.r,  ObjFunction.getDomainSize());
 		
@@ -67,6 +67,7 @@ public class GRASP_QBF_TP_INTELLIGENT extends AbstractGRASP<Integer> {
 	
 	public Integer r;
 	public double lambda;
+	public double p_i;
 	
 	
 	/**
@@ -86,6 +87,9 @@ public class GRASP_QBF_TP_INTELLIGENT extends AbstractGRASP<Integer> {
 		int iteracoes = 1;
 		Double best_p;
 		Integer p_k;
+		if (eliteSolutionsPool.size() == r)
+			lambda -= lambda*(p_i);
+		
 		/* Main loop, which repeats until the stopping criteria is reached. */
 		while (!constructiveStopCriteria()) {
 			sumK = 0;
@@ -93,6 +97,7 @@ public class GRASP_QBF_TP_INTELLIGENT extends AbstractGRASP<Integer> {
 			incumbentCost = ObjFunction.evaluate(incumbentSol);
 			updateCL();
 			iteracoes++;
+						
 			/*
 			 * Explore all candidate elements to enter the solution, saving the
 			 * highest anp_idxd lowest cost variation achieved by the candidates.
@@ -129,55 +134,30 @@ public class GRASP_QBF_TP_INTELLIGENT extends AbstractGRASP<Integer> {
 			if (RCL.size() == 0)
 				break;
 			
+			// Intelligent search probability
 			// obtain p from K
 			for (int i = 0; i < K.size(); i ++) {
 				K.set(i, lambda*K.get(i)/totalCostRCL + 
-						 eliteSolutionsPool.getIntensity(RCL.get(i)));				
-			}
-			
-			double rndP = rng.nextDouble();
-			
-			// Intelligent search robability
-			int p_idx = -1;
-			best_p = 0.0;
-			ArrayList <Integer> p_ = new ArrayList<Integer>();
-			for (int i = 0; i < K.size(); i++) {
-				p_k =   (int) ((K.get(i)/sumK) * 100);
-				p_.add(p_k);
+						 eliteSolutionsPool.getIntensity(RCL.get(i)));	
+				sumK += K.get(i);				
 			}
 			
 			int rndIndex = rng.nextInt(100) + 1;
 			int acumulado = 1;
-			for (int i = 0; acumulado <= 100 && i < p_.size(); i++) {
-				if (rndIndex >= acumulado && rndIndex <= acumulado + p_.get(i)) {
+			int p_i;
+			for (int i = 0; acumulado <= 100 && i < K.size(); i++) {
+				p_i = (int) ((K.get(i)/sumK) * 100);
+				
+				if (rndIndex >= acumulado && rndIndex <= acumulado + p_i) {
 					Integer inCand = RCL.get(i);
 					CL.remove(inCand);
 					incumbentSol.add(inCand);
 					ObjFunction.evaluate(incumbentSol);
 					adicionarValorNaSolucao(inCand);
 				}
-				acumulado += p_.get(i);
+				acumulado += p_i;
 			}
 			
-			/*
-			if (p_idx == -1) // no element was added, add at random
-			{
-				int rndIndex = rng.nextInt(RCL.size());
-				Integer inCand = RCL.get(rndIndex);		
-				
-				CL.remove(inCand);
-				incumbentSol.add(inCand);
-				ObjFunction.evaluate(incumbentSol);
-				adicionarValorNaSolucao(inCand);
-			} else {
-				Integer inCand = RCL.get(p_idx);		
-				
-				CL.remove(inCand);
-				incumbentSol.add(inCand);
-				ObjFunction.evaluate(incumbentSol);
-				adicionarValorNaSolucao(inCand);
-			}
-			*/
 			RCL.clear();
 			K.clear();
 		}
@@ -197,6 +177,7 @@ public class GRASP_QBF_TP_INTELLIGENT extends AbstractGRASP<Integer> {
 		bestSol = createEmptySol();
 		long startTime = System.currentTimeMillis();
 		for (int i = 0; i < iterations && (System.currentTimeMillis()-startTime)/1000.0 < 1800.0; i++) {
+			p_i = i/iterations;
 			constructiveHeuristic();
 			localSearch();
 			if (bestSol.cost > incumbentSol.cost) {
