@@ -90,7 +90,7 @@ public class GRASP_QBF_TP_INTELLIGENT extends AbstractGRASP<Integer> {
 		if (eliteSolutionsPool.size() == r)
 			lambda -= lambda*(p_i);
 		if (lambda < 1)
-			lambda = r/2;
+			lambda = r/10;
 		
 		/* Main loop, which repeats until the stopping criteria is reached. */
 		while (!constructiveStopCriteria()) {
