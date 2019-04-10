@@ -16,7 +16,7 @@ public class EliteSolutions {
 	private Integer bestIdx, worstIdx;
 	
 	public Integer[] countElem;
-	private Double[] intensity; // computed as the frequency of each element from 0 to 1
+	//private Double[] intensity; // computed as the frequency of each element from 0 to 1
 	
 	private ArrayList<Solution<Integer>> poolEliteSols;
 	
@@ -36,14 +36,14 @@ public class EliteSolutions {
 		Arrays.fill(countElem, 0);
 		
 		// initialize intensity to zero
-		intensity = new Double[n];
-		Arrays.fill(intensity, 0.0);
+		//intensity = new Double[n];
+		//Arrays.fill(intensity, 0.0);
 		
 		// initialize the pool of elite solutions
 		poolEliteSols = new ArrayList<Solution<Integer>>();		
 	}
 	
-	public Integer getCount(Integer idx) {
+	public Integer getIntensity(Integer idx) {
 		return countElem[idx];
 	}
 	
@@ -110,10 +110,10 @@ public class EliteSolutions {
 		}
 	}
 	
-	public void computeI() {
-		for (int i = 0; i < intensity.length; i++)
-			intensity[i] = (double) (countElem[i] / sumCounts);
-	}
+//	public void computeI() {
+//		for (int i = 0; i < intensity.length; i++)
+//			intensity[i] = (double) (countElem[i] / sumCounts);
+//	}
 	
 	public Boolean isDifferent(Solution<Integer> sol) {
 		// compare to the others solution in the pool
