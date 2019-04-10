@@ -170,9 +170,9 @@ public abstract class AbstractGRASP_TP_RANDOMPLUS<E > {
 			incumbentCost = ObjFunction.evaluate(incumbentSol);
 			updateCL();
 			if (iteracoes <= p)
-				alpha = 0.85;
+				alpha = 1.00;
 			else {
-				alpha = 0.15;
+				alpha = 0.00;
 			}
 			iteracoes++;
 			/*
