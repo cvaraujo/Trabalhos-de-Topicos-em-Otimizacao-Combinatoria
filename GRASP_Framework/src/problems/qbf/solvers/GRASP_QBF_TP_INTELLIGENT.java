@@ -43,7 +43,8 @@ public class GRASP_QBF_TP_INTELLIGENT extends AbstractGRASP<Integer> {
 		super(new QBF_Inverse(filename), alpha, iterations);
 		inicializaHashMap();
 		this.first_improving = first_improving;
-		this.r = ObjFunction.getDomainSize()/10;
+		this.r = (int) Math.round(ObjFunction.getDomainSize()*0.20);
+		this.lambda = this.r;
 		eliteSolutionsPool = new EliteSolutions(this.r,  ObjFunction.getDomainSize());
 		
 		K = new ArrayList<Double>();
@@ -65,6 +66,7 @@ public class GRASP_QBF_TP_INTELLIGENT extends AbstractGRASP<Integer> {
 	protected ArrayList<Double> K;
 	
 	public Integer r;
+	public double lambda;
 	
 	
 	/**
@@ -80,8 +82,7 @@ public class GRASP_QBF_TP_INTELLIGENT extends AbstractGRASP<Integer> {
 		incumbentSol = createEmptySol();
 		incumbentCost = Double.POSITIVE_INFINITY;
 		ZeraSolucao();
-		double lambda = 5.0, sumK = 0;
-		int p = CL.size()/10;
+		double sumK = 0;
 		int iteracoes = 1;
 		Double best_p, p_k;
 		/* Main loop, which repeats until the stopping criteria is reached. */
@@ -90,11 +91,6 @@ public class GRASP_QBF_TP_INTELLIGENT extends AbstractGRASP<Integer> {
 			double maxCost = Double.NEGATIVE_INFINITY, minCost = Double.POSITIVE_INFINITY;
 			incumbentCost = ObjFunction.evaluate(incumbentSol);
 			updateCL();
-//			if (iteracoes <= p)
-//				alpha = 0.85;
-//			else {
-				
-//			}
 			iteracoes++;
 			/*
 			 * Explore all candidate elements to enter the solution, saving the
@@ -112,22 +108,31 @@ public class GRASP_QBF_TP_INTELLIGENT extends AbstractGRASP<Integer> {
 			 * Among all candidates, insert into the RCL those with the highest
 			 * performance using parameter alpha as threshold.
 			 */
+			Double totalCostRCL = 0.0;
 			for (Integer c : CL) {
 				Double deltaCost = ObjFunction.evaluateInsertionCost(c, incumbentSol);
 				if (deltaCost <= minCost + alpha * (maxCost - minCost)) {
 					RCL.add(c);
-					Integer I = eliteSolutionsPool.getCount(c);
-					K.add(lambda*deltaCost*-1 + I);
-					sumK += K.get(K.size()-1);
+					//Integer I = eliteSolutionsPool.getIntensity(c);
+					//K.add(lambda*deltaCost*-1 + I);
+					//sumK += K.get(K.size()-1);
+					
+					K.add(deltaCost);
+					totalCostRCL += deltaCost;
 				}
 			}
-			
-			
+						
 			/* Choose a candidate randomly from the RCL */
 			//System.out.println("Tam = " + RCL.size());
 			//System.out.println("xxxx");
 			if (RCL.size() == 0)
 				break;
+			
+			// obtain p from K
+			for (int i = 0; i < K.size(); i ++) {
+				K.set(i, lambda*K.get(i)/totalCostRCL + 
+						 eliteSolutionsPool.getIntensity(RCL.get(i)));				
+			}
 			
 			double rndP = rng.nextDouble();
 			
